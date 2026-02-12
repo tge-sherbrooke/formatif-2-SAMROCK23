@@ -1,71 +1,61 @@
 #!/usr/bin/env python3
 """
-Effet chenillard sur 3 LEDs via GPIO.
-
-À COMPLÉTER (BONUS) : Créez un effet chenillard
-
-Câblage :
-- LED rouge : GPIO 17 → résistance 330Ω → GND
-- LED verte : GPIO 27 → résistance 330Ω → GND
-- LED jaune : GPIO 22 → résistance 330Ω → GND
+Contrôle de 3 LEDs
+Cours 243-413-SH, Semaine 2
 """
-
-import time
 import RPi.GPIO as GPIO
+import time
 
-# Configuration des broches GPIO
-LED_ROUGE = 17
-LED_VERTE = 27
-LED_JAUNE = 22
+# Configuration des broches
+LED_ROUGE = 17 # Pin 11
+LED_VERTE = 27 # Pin 13
+LED_JAUNE = 22 # Pin 15
 
-LEDS = [LED_ROUGE, LED_VERTE, LED_JAUNE]
+# Initialisation
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LED_ROUGE, GPIO.OUT)
+GPIO.setup(LED_VERTE, GPIO.OUT)
+GPIO.setup(LED_JAUNE, GPIO.OUT)
 
-def chenillard(delai=0.3):
-    """
-    Effet chenillard : les LEDs s'allument successivement.
+# Éteindre toutes les LEDs au démarrage
+GPIO.output(LED_ROUGE, GPIO.LOW)
+GPIO.output(LED_VERTE, GPIO.LOW)
+GPIO.output(LED_JAUNE, GPIO.LOW)
 
-    Args:
-        delai (float): Délai entre chaque LED en secondes
-    """
-    # TODO : Implémenter l'effet chenillard
-    # Allumer LED 1, attendre, éteindre LED 1
-    # Allumer LED 2, attendre, éteindre LED 2
-    # Allumer LED 3, attendre, éteindre LED 3
-    # Répéter
-    pass
+def allumer(led):
+    """Allume une LED spécifique"""
+    GPIO.output(led, GPIO.HIGH)
 
-def chenillard_allume(delai=0.3):
-    """
-    Effet chenillard où les LEDs restent allumées.
+def eteindre(led):
+    """Éteint une LED spécifique"""
+    GPIO.output(led, GPIO.LOW)
 
-    Args:
-        delai (float): Délai entre chaque LED en secondes
-    """
-    # TODO : Implémenter l'effet chenillard "qui reste allumé"
-    pass
+def sequence_chenillard():
+    """Effet chenillard sur les 3 LEDs"""
+    leds = [LED_ROUGE, LED_VERTE, LED_JAUNE]
+    noms = {LED_ROUGE: "Rouge", LED_VERTE: "Verte", LED_JAUNE: "Jaune"}
+    for _ in range(3): # 3 tours complets
+        for led in leds:
+            allumer(led)
+            print(f"LED {noms[led]} allumée")
+            time.sleep(0.5)
+            eteindre(led)
+try:
+    print("=== Démo LEDs RGB ===")
+    print("Test individuel...")
+    # Test individuel
+    for led, nom in [(LED_ROUGE, "Rouge"), (LED_VERTE, "Verte"), (LED_JAUNE, "Jaune")]:
+        print(f"Test LED {nom}")
+        allumer(led)
+        time.sleep(1)
+        eteindre(led)
+        time.sleep(0.5)
 
-def main():
-    """Fonction principale."""
-    # Configuration
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(LEDS, GPIO.OUT)
-
-    # Éteindre toutes les LEDs au départ
-    for led in LEDS:
-        GPIO.output(led, GPIO.LOW)
-
-    print("Effet chenillator sur 3 LEDs")
-    print("Appuyez sur Ctrl+C pour quitter")
-
-    try:
-        while True:
-            # TODO : Appeler votre fonction chenillard
-            pass
-
-    except KeyboardInterrupt:
-        print("\nAu revoir!")
-    finally:
-        GPIO.cleanup()
-
-if __name__ == "__main__":
-    main()
+    print("\nEffet chenillard...")
+    sequence_chenillard()
+    print("\n=== Fin de la démo ===")
+except KeyboardInterrupt:
+    print("\nArrêt demandé")
+finally:
+    GPIO.cleanup()
+    print("GPIO nettoyé !")

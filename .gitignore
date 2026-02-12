@@ -41,4 +41,4 @@ Thumbs.db
 .uv/
 
 # Test markers (will be unignored by run_tests.py)
-.test_markers/
+# .test_markers/ is now allowed (created by run_tests.py)
